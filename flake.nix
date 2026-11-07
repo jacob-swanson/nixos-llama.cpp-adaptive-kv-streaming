@@ -34,7 +34,7 @@
               npmDepsHash = "sha256-hqYzdp1FwPhYkBP278fQXgY9NCKB6Q3P6Gko7BfP0m0=";
               doCheck = false; # there is a failing test
             }).override
-              { cudaSupport = false; };
+              { cudaSupport = true; };
         }
       );
     };
