@@ -29,6 +29,7 @@
           pkgs = import nixpkgs {
             inherit system;
             config.allowUnfree = true;
+            config.cudaCapabilities = [ "8.9" ];
           };
         in
         {
@@ -39,7 +40,9 @@
               npmDepsHash = "sha256-hqYzdp1FwPhYkBP278fQXgY9NCKB6Q3P6Gko7BfP0m0=";
               doCheck = false; # there is a failing test
             }).override
-              { cudaSupport = true; };
+              {
+                cudaSupport = true;
+              };
         }
       );
     };
