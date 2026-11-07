@@ -27,12 +27,10 @@
           pkgs = nixpkgs.legacyPackages.${system};
         in
         {
-          llama-cpp-adaptive-kv = pkgs.llama-cpp.overrideAttrs {
-            src = llama-cpp-adaptive-kv;
-          };
-
           default = pkgs.llama-cpp.overrideAttrs {
             src = llama-cpp-adaptive-kv;
+            #npmDepsHash = nixpkgs.lib.fakeHash;
+            npmDepsHash = "sha256-hqYzdp1FwPhYkBP278fQXgY9NCKB6Q3P6Gko7BfP0m0=";
           };
         }
       );
