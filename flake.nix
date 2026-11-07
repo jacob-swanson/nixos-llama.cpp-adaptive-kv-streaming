@@ -34,14 +34,20 @@
         in
         {
           default =
-            (pkgs.llama-cpp.overrideAttrs {
+            (pkgs.llama-cpp.overrideAttrs (old: {
               src = llama-cpp-adaptive-kv;
               #npmDepsHash = nixpkgs.lib.fakeHash;
               npmDepsHash = "sha256-hqYzdp1FwPhYkBP278fQXgY9NCKB6Q3P6Gko7BfP0m0=";
               doCheck = false; # there is a failing test
-            }).override
+              # Reduce peak memory use to prevent out of memory errors
+              ninjaFlags = (old.ninjaFlags or [ ]) ++ [ "-j4" ];
+              cmakeFlags = (old.cmakeFlags or [ ]) ++ [
+                (nixpkgs.lib.cmakeFeature "CMAKE_CUDA_FLAGS" "--threads=1")
+              ];
+            })).override
               {
                 cudaSupport = true;
+                cpuArchDynamicDispatch = false; # skip building all CPU variants
               };
         }
       );
