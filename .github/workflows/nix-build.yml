@@ -35,21 +35,10 @@ jobs:
         uses: DeterminateSystems/magic-nix-cache-action@main
 
       - name: Install cachix
-        run: |
-          set -euo pipefail
-          nix profile add github:NixOS/nixpkgs#cachix
+        uses: cachix/cachix-action@v17
+        with:
+          name: jacob-swanson-nixos-llama-cpp-ad
+          authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
 
-      - name: Use cachix
-        run: |
-          set -euo pipefail
-          cachix use jacob-swanson-nixos-llama-cpp-ad
-
-      - name: Build and push
-        if: github.ref == 'refs/heads/main'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          CACHIX_AUTH_TOKEN: ${{ secrets.CACHIX_AUTH_TOKEN }}
-        run: |
-          set -euo pipefail
-          nix build --no-link --print-out-paths \
-            | cachix push jacob-swanson-nixos-llama-cpp-ad
+      - name: Build
+        run: nix build .
