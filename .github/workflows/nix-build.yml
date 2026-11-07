@@ -1,22 +1,51 @@
-name: "Publish every Git push to main to FlakeHub"
+name: Build & cache
+
 on:
   push:
-    branches:
-      - "main"
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  flakehub-publish:
-    runs-on: "ubuntu-latest"
-    permissions:
-      id-token: "write"
-      contents: "read"
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
     steps:
-      - uses: "actions/checkout@v6"
+      - name: Checkout
+        uses: actions/checkout@v4
         with:
+          fetch-depth: 0
           persist-credentials: false
-      - uses: "DeterminateSystems/determinate-nix-action@v3"
-      - uses: "DeterminateSystems/flakehub-push@main"
-        with:
-          name: "jacob-swanson/nixos-llama.cpp-adaptive-kv-streaming"
-          rolling: true
-          visibility: "public"
-          include-output-paths: true
+
+      - name: Check Nix flake inputs
+        uses: DeterminateSystems/flake-checker-action@main
+
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@main
+
+      - name: Install Nix cache
+        uses: DeterminateSystems/magic-nix-cache-action@main
+
+      - name: Install cachix
+        run: |
+          set -euo pipefail
+          nix profile add github:NixOS/nixpkgs#cachix
+
+      - name: Use cachix
+        run: |
+          set -euo pipefail
+          cachix use jacob-swanson-nixos-llama-cpp-ad
+
+      - name: Build and push
+        if: github.ref == 'refs/heads/main'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CACHIX_AUTH_TOKEN: ${{ secrets.CACHIX_AUTH_TOKEN }}
+        run: |
+          set -euo pipefail
+          nix build --no-link --print-out-paths \
+            | cachix push jacob-swanson-nixos-llama-cpp-ad
