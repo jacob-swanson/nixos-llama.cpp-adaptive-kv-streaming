@@ -38,4 +38,4 @@ jobs:
           swap-size-gb: 10
 
       - name: Build
-        run: nix build --accept-flake-config .
+        run: chrt -b 0 nix build --accept-flake-config .
