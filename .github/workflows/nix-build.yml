@@ -32,5 +32,10 @@ jobs:
           name: jacob-swanson-nixos-llama-cpp-ad
           authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
 
+      - name: Set Swap Space
+        uses: pierotofy/set-swap-space@master
+        with:
+          swap-size-gb: 10
+
       - name: Build
         run: nix build --accept-flake-config .
