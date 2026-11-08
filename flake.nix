@@ -40,7 +40,7 @@
               npmDepsHash = "sha256-hqYzdp1FwPhYkBP278fQXgY9NCKB6Q3P6Gko7BfP0m0=";
               doCheck = false; # there is a failing test
               # Reduce peak memory use to prevent out of memory errors
-              ninjaFlags = (old.ninjaFlags or [ ]) ++ [ "-j4" ];
+              ninjaFlags = (old.ninjaFlags or [ ]) ++ [ "-j1" ];
               cmakeFlags = (old.cmakeFlags or [ ]) ++ [
                 (nixpkgs.lib.cmakeFeature "CMAKE_CUDA_FLAGS" "--threads=1")
               ];
