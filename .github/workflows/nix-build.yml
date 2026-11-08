@@ -38,7 +38,7 @@ jobs:
           swap-size-gb: 10
 
       - name: Build
-        run: chrt -b 0 nix build --accept-flake-config .
+        run: time chrt -b 0 nix build --accept-flake-config .
 
       - name: Diagnose failure
         if: failure()
