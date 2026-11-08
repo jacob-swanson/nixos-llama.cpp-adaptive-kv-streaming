@@ -42,7 +42,7 @@
               # Reduce peak memory use to prevent out of memory errors
               ninjaFlags = (old.ninjaFlags or [ ]) ++ [ "-j1" ];
               cmakeFlags = (old.cmakeFlags or [ ]) ++ [
-                (nixpkgs.lib.cmakeFeature "CMAKE_CUDA_FLAGS" "--threads=1")
+                (nixpkgs.lib.cmakeFeature "CMAKE_CUDA_FLAGS" "--threads=1 -Xptxas -O2")
               ];
             })).override
               {
